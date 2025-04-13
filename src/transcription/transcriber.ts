@@ -1,6 +1,23 @@
 import type { GladiaRequestBody, GladiaResponse } from '../types';
+import axios from 'axios';
+import fs from 'fs';
+import FormData from 'form-data';
+import fsPromise from 'fs/promises';
 
 const baseUrlGladia = 'https://api.gladia.io/v2/pre-recorded/';
+
+interface AudioUploadResponse {
+  audio_url: string;
+  audio_metadata: {
+    id: string;
+    filename: string;
+    source: string;
+    extension: string;
+    size: number;
+    audio_duration: number;
+    number_of_channels: number;
+  };
+}
 
 export class Transcriber {
   static async transcribeAudio({
@@ -10,25 +27,39 @@ export class Transcriber {
     audioPath: string;
     numberOfSpeakers: string;
   }) {
-    let transcriptionSummary = '';
-    const speakerNumber =
-      numberOfSpeakers !== 'auto-detect' && numberOfSpeakers !== undefined
-        ? parseInt(numberOfSpeakers)
-        : numberOfSpeakers;
+    try {
+      const speakerNumber =
+        numberOfSpeakers !== 'auto-detect' && numberOfSpeakers !== undefined
+          ? parseInt(numberOfSpeakers)
+          : numberOfSpeakers;
+
+      const audioUrl = await this.uploadAudioFile(audioPath);
+
+      const transcription = await this.getGladiaTranscription({
+        fileUrl: audioUrl,
+        numberOfSpeakers: speakerNumber,
+      });
+
+      return transcription;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error('Error in transcribeAudio: ' + error);
+      }
+    }
   }
 
   static async getGladiaTranscription({
-    filePath,
+    fileUrl,
     numberOfSpeakers,
   }: {
-    filePath: string;
+    fileUrl: string;
     numberOfSpeakers: number | 'auto-detect';
   }): Promise<GladiaResponse> {
     try {
-      let audioUrl = '';
-
       const requestData: GladiaRequestBody = {
-        audio_url: audioUrl!,
+        audio_url: fileUrl,
         detect_language: true,
         diarization: true,
         sentences: true,
@@ -65,10 +96,7 @@ export class Transcriber {
 
       const response = await this.pollForResult(initialResponse.id, headers);
 
-      return {
-        ...response,
-        original_audio_path: filePath,
-      };
+      return response;
     } catch (error) {
       console.error('Error in Gladia transcription:', error);
       throw new Error('Error in Gladia transcription');
@@ -101,5 +129,43 @@ export class Transcriber {
       throw new Error(`Gladia API error: ${response.statusText}`);
     }
     return response.json();
+  }
+
+  static async uploadAudioFile(filePath: string): Promise<string> {
+    const apiKey = process.env.GLADIA_API_KEY;
+    if (!apiKey) {
+      throw new Error('Missing GLADIA_API_KEY environment variable.');
+    }
+
+    try {
+      console.log('Uploading audio file to Gladia API...');
+
+      const form = new FormData();
+      const fileStream = fs.createReadStream(filePath);
+      const filename = filePath.split('/').pop() || 'audio.mp3';
+
+      form.append('audio', fileStream, filename);
+
+      const response = await axios.post('https://api.gladia.io/v2/upload', form, {
+        headers: {
+          'x-gladia-key': apiKey,
+          ...form.getHeaders(),
+        },
+      });
+
+      const data = response.data as AudioUploadResponse;
+
+      if (!data.audio_url) {
+        console.error('Error uploading audio file to Gladia API: ', data);
+        throw new Error('Error uploading audio file to Gladia API');
+      }
+
+      console.debug('File uploaded to Gladia API:', response.data);
+
+      return data.audio_url;
+    } catch (error: any) {
+      console.error('Error uploading audio file:', error.response?.data || error.message);
+      throw new Error(`Upload failed: ${error.message}`);
+    }
   }
 }

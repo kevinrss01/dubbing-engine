@@ -1,6 +1,6 @@
 import { AudioUtils } from '../ffmpeg/audio-utils';
 import { Helpers } from '../utils/helpers';
-
+import { Transcriber } from '../transcription/transcriber';
 export const translate = async () => {
   const targetLanguage = process.env.TARGET_LANGUAGE || 'english';
   const debugMode = process.env.DEBUG_MODE || 'false';
@@ -11,16 +11,34 @@ export const translate = async () => {
 
   Helpers.verifyPrerequisitesForDubbing();
 
-  const inputFilePath = await Helpers.getAllInputFilePaths();
-  const fileType = Helpers.getFileType(inputFilePath);
+  try {
+    const inputFilePath = await Helpers.getAllInputFilePaths();
+    const fileType = Helpers.getFileType(inputFilePath);
 
-  let videoPathWithoutAudio = null;
-  let audioPathWithoutVideo = null;
+    let videoPathWithoutAudio = null;
+    let audioPathWithoutVideo = null;
 
-  if (fileType === 'video') {
-    const { videoPath, audioPath } = await AudioUtils.separateAudioAndVideo(inputFilePath);
-  } else {
-    audioPathWithoutVideo = inputFilePath;
+    if (fileType === 'video') {
+      // Extract audio from video and set paths
+      const { videoPath, audioPath } = await AudioUtils.separateAudioAndVideo(inputFilePath);
+      videoPathWithoutAudio = videoPath;
+      audioPathWithoutVideo = audioPath;
+    } else {
+      audioPathWithoutVideo = inputFilePath;
+    }
+
+    const transcription = await Transcriber.transcribeAudio({
+      audioPath: audioPathWithoutVideo,
+      numberOfSpeakers,
+    });
+
+    console.log(transcription);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Error:', error.message);
+    } else {
+      console.error('Error:', error);
+    }
   }
 };
 
