@@ -211,7 +211,7 @@ export class TextTranslator {
     instruction: string;
     responseFormat?: 'text' | 'json';
   }) {
-    let model: OpenAIModel = models.chatgpt4oLatest;
+    let model: OpenAIModel = models.gpt4_1;
 
     try {
       return await requestToGPT({

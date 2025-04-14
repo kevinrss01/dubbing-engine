@@ -569,9 +569,7 @@ export class SpeechGenerator {
   ): Promise<string> {
     console.debug('Merging audio and background music...');
     try {
-      const outputPath = path.join(
-        `temporary-files/${crypto.randomUUID()}-for-mergeAudioAndBackgroundMusic.wav`,
-      );
+      const outputPath = path.join(`output/result-${crypto.randomUUID()}.wav`);
 
       //!Do not delete this line for the moment
       //await this.ffmpegService.amplifyAudio(backgroundMusicPath, 1.5);

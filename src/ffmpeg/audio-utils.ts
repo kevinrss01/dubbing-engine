@@ -44,7 +44,7 @@ export class AudioUtils {
 
   static async separateAudioAndVideo(inputPath: string): Promise<{ audioPath: string; videoPath: string }> {
     if (!fs.existsSync(inputPath)) throw new Error(`File not found: ${inputPath}`);
-    console.debug(`Separating audio and video from ${inputPath}`);
+    console.debug(`Separating audio and video...`);
 
     const audioOutputPathNoExtension = `temporary-files/audio-${crypto.randomUUID()}`;
     const videoOutputPath = `temporary-files/video-${crypto.randomUUID()}.mp4`;
@@ -622,8 +622,6 @@ export class AudioUtils {
 
       await fsPromises.writeFile(tempFileName, buffer);
 
-      console.debug('getting file duration for function getAudioDurationFromBuffer');
-
       // Use the common utility for getting file duration
       const duration = await VideoUtils.getFileDuration(tempFileName);
 
@@ -715,7 +713,6 @@ export class AudioUtils {
       throw new Error(`Silence duration is too short, must be greater than 0: ${duration}`);
     }
 
-    console.debug('Generating silence...');
     await new Promise((resolve, reject) => {
       const command = ffmpeg().input(`anullsrc=channel_layout=mono:sample_rate=${audioFrequency}`);
       //! Delete this workaround when the fix ffmpeg is released. See here:

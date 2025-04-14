@@ -126,8 +126,11 @@ echo -e "\n${BOLD}Number of speakers: ${BLUE}$num_speakers${NC}${BOLD}.${NC}"
 
 valid_lipsync=false
 while [ "$valid_lipsync" = false ]; do
+  echo -e "${BOLD}If you want to apply lipsync, please make sure you have a sync.so subscription.${NC}"
+  echo -e "${BOLD}You should have a AWS account with API keys for S3 access.${NC}"
   echo -e "\n${BOLD}Note:${NC} Lipsync duration depends on your sync.so subscription (1-30 minutes)."
   echo -e "${BOLD}Currently supports only one face. Please verify your subscription limits before proceeding.${NC}"
+  
   read -p "$(echo -e "${YELLOW}Do you want to apply lipsync? (yes/no) [Default: no]:${NC} ")" lipsync_option
   
   if [ -z "$lipsync_option" ]; then

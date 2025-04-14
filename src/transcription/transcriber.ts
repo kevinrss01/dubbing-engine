@@ -156,7 +156,7 @@ export class Transcriber {
         throw new Error('Error uploading audio file to Gladia API');
       }
 
-      console.debug('File uploaded to Gladia API:', response.data);
+      console.debug('File uploaded to Gladia API');
 
       return data.audio_url;
     } catch (error: any) {

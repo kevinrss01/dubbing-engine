@@ -315,7 +315,6 @@ export class Adaptation {
   }
 
   static async removeStartAndEndSilenceFromAudio(speech: Buffer): Promise<Buffer> {
-    console.debug('Removing start and end silence from audio...');
     const temporaryInputFile = `temporary-files/input-for-trim-${crypto.randomUUID()}.wav`;
     const temporaryOutputFile = `temporary-files/output-for-trim-${crypto.randomUUID()}.wav`;
 
@@ -345,7 +344,6 @@ export class Adaptation {
 
       const bufferNewSpeech = await fsPromises.readFile(temporaryOutputFile);
 
-      console.debug('Start and end silence removed from audio.');
       return bufferNewSpeech;
     } catch (err: any) {
       console.error('Error in removeStartAndEndSilenceFromAudio:', err);

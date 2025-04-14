@@ -16,6 +16,7 @@ export const models = {
   o3Mini: 'o3-mini',
   o1Pro: 'o1-pro',
   gpt45Preview: 'gpt-4.5-preview',
+  gpt4_1: 'gpt-4.1',
 };
 
 const oModelsWithoutInstructions: OpenAIModel[] = [models.o1Mini, models.o1, models.o3Mini];

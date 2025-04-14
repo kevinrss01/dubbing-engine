@@ -58,14 +58,11 @@ export class VideoUtils {
     });
   }
 
-  static async getAudioMergeWithVideo(
-    videoPath: string,
-    audioPath: string,
-  ): Promise<{ stream: Readable; filePath: string }> {
+  static async getAudioMergeWithVideo(videoPath: string, audioPath: string): Promise<string> {
     console.debug('Merging audio and video...');
     let filePath = '';
     try {
-      const outputPath = path.join(`temporary-files/${crypto.randomUUID()}.mp4`);
+      const outputPath = path.join(`output/result-${crypto.randomUUID()}.mp4`);
       const contentLength = await this.getFileDuration(audioPath);
 
       if (typeof contentLength !== 'number')
@@ -81,8 +78,7 @@ export class VideoUtils {
 
       console.debug('Audio and video merged.');
 
-      const stream = createReadStream(filePath);
-      return { stream, filePath };
+      return filePath;
     } catch (e) {
       console.error(e);
       throw new Error('Error while merging audio and video');
@@ -171,6 +167,99 @@ export class VideoUtils {
         });
 
       command.run();
+    });
+  };
+
+  static addSubtitles = async ({
+    videoPath,
+    srtFilePath,
+    outputFilePath,
+  }: {
+    videoPath: string;
+    srtFilePath: string;
+    outputFilePath: string;
+  }) => {
+    if (!fs.existsSync(srtFilePath)) {
+      throw new Error('Srt file does not exist');
+    }
+
+    return new Promise((resolve, reject) => {
+      // Get input file info
+      ffmpeg.ffprobe(videoPath, (err, metadata) => {
+        if (err) {
+          console.error('Error probing video file:', err);
+          return reject(err);
+        }
+
+        // Check if we're dealing with an HEVC/H.265 video
+        const videoStream = metadata.streams.find((stream) => stream.codec_type === 'video');
+        const isHEVC =
+          videoStream && videoStream.codec_name && videoStream.codec_name.toLowerCase().includes('hevc');
+        const is10bit = videoStream && videoStream.pix_fmt && videoStream.pix_fmt.includes('10le');
+
+        console.debug(
+          `Video info: codec=${videoStream?.codec_name}, pixel format=${videoStream?.pix_fmt}, isHEVC=${isHEVC}, is10bit=${is10bit}`,
+        );
+
+        let command = ffmpeg(videoPath);
+
+        // Add subtitles filter with compatible font
+        const subtitlesFilter = `subtitles=${srtFilePath}:force_style='FontName=DejaVu'`;
+
+        if (isHEVC || is10bit) {
+          // For HEVC/10-bit videos that need browser compatibility:
+          console.debug('Converting HEVC/10-bit video to browser-compatible format');
+          command = command
+            .videoCodec('libx264') // Use H.264 which has better browser support
+            .outputOptions([
+              '-vf',
+              subtitlesFilter,
+              '-pix_fmt',
+              'yuv420p', // Convert to 8-bit color
+              '-crf',
+              '18', // High quality
+              '-preset',
+              'medium', // Balance between speed and quality
+              '-movflags',
+              '+faststart', // Optimize for web playback
+              '-c:a',
+              'aac', // Convert audio to AAC for compatibility
+              '-b:a',
+              '320k', // Good audio quality
+            ]);
+        } else {
+          // For already compatible videos, minimal processing
+          command = command.videoCodec('libx264').outputOptions([
+            '-vf',
+            subtitlesFilter,
+            '-pix_fmt',
+            'yuv420p', // Ensure 8-bit color
+            '-c:a',
+            'copy', // Copy audio stream
+            '-movflags',
+            '+faststart', // Optimize for web playback
+          ]);
+        }
+
+        command
+          .on('start', (commandLine) => {
+            console.debug('FFmpeg command:', commandLine);
+          })
+          .on('stderr', (stderrLine) => {
+            if (stderrLine.includes('error')) {
+              console.error('FFmpeg stderr:', stderrLine);
+            }
+          })
+          .on('end', () => {
+            console.debug('Subtitles added successfully');
+            resolve(outputFilePath);
+          })
+          .on('error', (err) => {
+            console.error('Error adding subtitles:', err);
+            reject(err);
+          })
+          .save(outputFilePath);
+      });
     });
   };
 }
