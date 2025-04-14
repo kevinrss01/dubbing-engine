@@ -1,6 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { allowedExtensions, audioExtensions, videoExtensions } from './constants';
+import type { SegmentWitDurationAndOriginalSegment } from '../types';
+import { VideoUtils } from '../ffmpeg/video-utils';
+import fsPromises from 'fs/promises';
 
 export class Helpers {
   static async verifyPrerequisitesForDubbing() {
@@ -36,7 +39,6 @@ export class Helpers {
     const applyLipsync = process.env.APPLY_LIPSYNC;
     const targetLanguage = process.env.TARGET_LANGUAGE;
     const syncLabApiKey = process.env.SYNC_LAB_API_KEY;
-
 
     if (!numberOfSpeakers) {
       throw new Error('Environment variable NUMBER_OF_SPEAKERS is missing or not a valid number.');
@@ -115,6 +117,74 @@ export class Helpers {
       return 'video';
     } else {
       throw new Error(`Unsupported file type: ${ext}`);
+    }
+  }
+
+  static parseAndVerifyTranscriptionDetails(
+    transcriptionDetails: string,
+  ): SegmentWitDurationAndOriginalSegment[] {
+    try {
+      let parsedTranscriptions =
+        typeof transcriptionDetails === 'string'
+          ? (JSON.parse(transcriptionDetails) as SegmentWitDurationAndOriginalSegment[])
+          : (transcriptionDetails as SegmentWitDurationAndOriginalSegment[]);
+
+      parsedTranscriptions = parsedTranscriptions.map((partTranscription) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { wordsWithSilence, ...rest } = partTranscription;
+        const segment = rest;
+        if (!partTranscription.channel) {
+          partTranscription.channel = 0;
+        }
+
+        const isEveryValueCorrect = Object.values(segment).every(
+          (value) => value !== '' && value !== null && value !== undefined,
+        );
+
+        if (!isEveryValueCorrect) {
+          throw new Error('Invalid transcription details, one or more values are incorrect or empty');
+        }
+
+        return partTranscription;
+      });
+
+      console.debug('Transcription details parsed.');
+      return parsedTranscriptions;
+    } catch (err: any) {
+      console.error(err);
+      throw new Error('Error while parsing transcription: ' + err);
+    }
+  }
+
+  static async getVideoLength(filePath: string) {
+    if (!filePath) throw new Error('File path is required');
+
+    const duration = await VideoUtils.getFileDuration(filePath);
+    if (typeof duration !== 'number')
+      throw new Error(
+        `Error during audio duration calculation in translation service: duration is not a number: ${duration}`,
+      );
+
+    return Math.round(duration / 60);
+  }
+
+  static async splitAudioIntoBuffers(filePath: string): Promise<Buffer[]> {
+    try {
+      console.debug('Splitting audio into buffers...');
+      const fileSizeLimit = 10 * 1024 * 1024; // 10 MB en bytes
+      const fileBuffer = await fsPromises.readFile(filePath);
+      const buffers = [];
+
+      for (let start = 0; start < fileBuffer.length; start += fileSizeLimit) {
+        const end = Math.min(start + fileSizeLimit, fileBuffer.length);
+        buffers.push(fileBuffer.slice(start, end));
+      }
+
+      console.debug('Audio split into buffers.');
+      return buffers;
+    } catch (error) {
+      console.error('Erreur lors de la lecture ou de la découpe du fichier:', error);
+      throw error;
     }
   }
 }

@@ -128,3 +128,38 @@ export const languageCodes: LanguageObject = {
   yo: 'Yoruba',
   zu: 'Zulu',
 };
+
+export const nonLatinScriptLanguages: string[] = [
+  'ar', // Arabic
+  'am', // Amharic
+  'as', // Assamese
+  'bn', // Bengali
+  'my', // Burmese
+  'zh', // Mandarin
+  'gu', // Gujarati
+  'he', // Hebrew
+  'hi', // Hindi
+  'ja', // Japanese
+  'kn', // Kannada
+  'kk', // Kazakh
+  'km', // Khmer
+  'ko', // Korean
+  'lo', // Lao
+  'ml', // Malayalam
+  'mr', // Marathi
+  'mn', // Mongolian
+  'ne', // Nepali
+  'or', // Oriya
+  'pa', // Punjabi
+  'ps', // Pashto
+  'fa', // Persian
+  'sa', // Sanskrit
+  'sd', // Sindhi
+  'si', // Sinhala
+  'ta', // Tamil
+  'te', // Telugu
+  'th', // Thai
+  'bo', // Tibetan
+  'ur', // Urdu
+  'yi', // Yiddish
+];

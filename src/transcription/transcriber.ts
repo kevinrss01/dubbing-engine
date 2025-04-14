@@ -87,10 +87,7 @@ export class Transcriber {
         body: JSON.stringify(requestData),
       });
 
-      console.debug('requestData:', requestData);
-
       if (!initialResponse.id) {
-        console.debug('Gladia response:', initialResponse);
         throw new Error('Error with gladia initialization');
       }
 
@@ -113,7 +110,6 @@ export class Transcriber {
       });
 
       if (pollResponse.status === 'done') {
-        console.debug('pollResponse Gladia parameters:', pollResponse.request_params);
         return pollResponse;
       } else if (pollResponse.status === 'error') {
         throw new Error(`Gladia transcription failed: ${pollResponse.error}`);
@@ -138,7 +134,7 @@ export class Transcriber {
     }
 
     try {
-      console.log('Uploading audio file to Gladia API...');
+      console.debug('Uploading audio file to Gladia API...');
 
       const form = new FormData();
       const fileStream = fs.createReadStream(filePath);

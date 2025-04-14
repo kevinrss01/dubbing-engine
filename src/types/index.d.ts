@@ -1,3 +1,9 @@
+export interface TranscriptionDataTypes {
+  summary: SegmentDetailOutWithDuration | null;
+  formattedSegments: string[];
+  detectedAudioLanguage: AudioOriginalLangAllowed | null;
+}
+
 export interface GladiaResponse {
   id: string;
   request_id: string;
@@ -11,6 +17,100 @@ export interface GladiaResponse {
   //Custom, not natively from Gladia
   original_audio_path: string;
   error_code?: string;
+}
+
+export interface Metadata {
+  audio_duration: number;
+  number_of_distinct_channels: number;
+  billing_time: number;
+  transcription_time: number;
+}
+
+export interface Word {
+  word: string;
+  start: number;
+  end: number;
+  confidence: number;
+}
+
+export interface Utterance {
+  text: string;
+  language: string;
+  start: number;
+  end: number;
+  confidence: number;
+  channel: number;
+  speaker: number;
+  words: Word[];
+}
+
+export interface Sentence {
+  sentence: string;
+  language: string;
+  start: number;
+  end: number;
+  confidence: number;
+  channel: number;
+  speaker: number;
+  words: Word[];
+}
+
+export interface SegmentDetail {
+  transcription: string;
+  language: string;
+  begin: number;
+  end: number;
+  speaker: number;
+  channel: number;
+  confidence: number;
+  wordsWithSilence: string;
+}
+
+export interface SegmentWitDurationAndOriginalSegment extends SegmentDetail {
+  duration: number;
+  index: number;
+  originalTranscription: string;
+}
+
+export interface SegmentDetailOut extends SegmentDetail {
+  index: number;
+}
+
+export interface SegmentDetailOutWithDuration extends SegmentDetailOut {
+  duration: number;
+}
+
+export interface Result {
+  metadata: Metadata;
+  summarization: {
+    success: boolean;
+    is_empty: boolean;
+    results: string;
+    exec_time: number;
+    error: string | null;
+  };
+  transcription: Transcription;
+}
+
+export interface Transcription {
+  languages: string[];
+  full_transcript: string;
+  utterances: Utterance[];
+  sentences: Sentence[];
+}
+
+export interface CreatePromptArguments {
+  transcriptionToTranslate: string;
+  lastTranscription: string;
+  targetLanguage: string;
+  originLanguage: string;
+  mainCategoryVideo: string;
+  nextTranscription?: string;
+  transcriptionToTranslateSpeaker: string;
+  previousTranscriptionSpeaker?: string;
+  nextTranscriptionSpeaker?: string;
+  videoTitle?: string;
+  transcriptionSummary?: string;
 }
 
 export interface GladiaRequestBody {

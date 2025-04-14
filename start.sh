@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# Colors and formatting
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 BOLD='\033[1m'
 
 clear
@@ -13,7 +12,6 @@ echo -e "${BOLD}║      ${BLUE}Choose the target language  ${NC}      ${BOLD}�
 echo -e "${BOLD}╚════════════════════════════════════════╝${NC}"
 echo ""
 
-# Store languages in an array
 languages=(
   "swedish"
   "korean"
@@ -52,7 +50,6 @@ languages=(
   "french canadian"
 )
 
-# Display languages in columns
 echo -e "${BOLD}Available languages:${NC}\n"
 
 COLUMNS=3
@@ -75,20 +72,16 @@ valid_selection=false
 while [ "$valid_selection" = false ]; do
   read -p "$(echo -e "${YELLOW}Enter a language number (1-$count) or type the language name [Default: english]:${NC} ")" selection
   
-  # Set default to "english" if empty
   if [ -z "$selection" ]; then
     selection="english"
   fi
 
-  # Validate input
   is_valid=false
 
-  # Check if input is a number in valid range
   if [[ $selection =~ ^[0-9]+$ ]] && [ $selection -ge 1 ] && [ $selection -le $count ]; then
     selected_language=${languages[$((selection-1))]}
     is_valid=true
   else
-    # Check if input matches a language name (case insensitive)
     selection_lower=$(echo "$selection" | tr '[:upper:]' '[:lower:]')
     for lang in "${languages[@]}"; do
       if [ "$selection_lower" = "$(echo "$lang" | tr '[:upper:]' '[:lower:]')" ]; then
@@ -110,18 +103,15 @@ done
 
 echo -e "\n${BOLD}Starting translation...${NC}\n"
 
-# Ask about number of speakers
 valid_speakers=false
 while [ "$valid_speakers" = false ]; do
   echo -e "\n${BOLD}Note:${NC} It is recommended to specify the exact number of speakers for better results."
   read -p "$(echo -e "${YELLOW}How many speakers are in the video? (auto-detect or 1-10) [Default: auto-detect]:${NC} ")" num_speakers
   
-  # Set default to "auto-detect" if empty
   if [ -z "$num_speakers" ]; then
     num_speakers="auto-detect"
   fi
 
-  # Validate input
   if [ "$num_speakers" = "auto-detect" ]; then
     valid_speakers=true
   elif [[ $num_speakers =~ ^[0-9]+$ ]] && [ $num_speakers -ge 1 ] && [ $num_speakers -le 10 ]; then
@@ -134,19 +124,16 @@ done
 export NUM_SPEAKERS="$num_speakers"
 echo -e "\n${BOLD}Number of speakers: ${BLUE}$num_speakers${NC}${BOLD}.${NC}"
 
-# Ask about lipsync
 valid_lipsync=false
 while [ "$valid_lipsync" = false ]; do
   echo -e "\n${BOLD}Note:${NC} Lipsync duration depends on your sync.so subscription (1-30 minutes)."
   echo -e "${BOLD}Currently supports only one face. Please verify your subscription limits before proceeding.${NC}"
   read -p "$(echo -e "${YELLOW}Do you want to apply lipsync? (yes/no) [Default: no]:${NC} ")" lipsync_option
   
-  # Set default to "no" if empty
   if [ -z "$lipsync_option" ]; then
     lipsync_option="no"
   fi
 
-  # Convert to lowercase for comparison
   lipsync_lower=$(echo "$lipsync_option" | tr '[:upper:]' '[:lower:]')
   
   if [ "$lipsync_lower" = "yes" ] || [ "$lipsync_lower" = "no" ]; then
@@ -159,17 +146,14 @@ done
 export APPLY_LIPSYNC="$lipsync_lower"
 echo -e "\n${BOLD}Apply lipsync: ${BLUE}$lipsync_lower${NC}${BOLD}.${NC}\n"
 
-# Ask about debug mode
 valid_debug=false
 while [ "$valid_debug" = false ]; do
   read -p "$(echo -e "${YELLOW}Activate debug mode to see all logs? (yes/no) [Default: yes]:${NC} ")" debug_option
   
-  # Set default to "yes" if empty
   if [ -z "$debug_option" ]; then
     debug_option="yes"
   fi
 
-  # Convert to lowercase for comparison
   debug_lower=$(echo "$debug_option" | tr '[:upper:]' '[:lower:]')
   
   if [ "$debug_lower" = "yes" ] || [ "$debug_lower" = "no" ]; then
@@ -182,5 +166,24 @@ done
 export DEBUG_MODE="$debug_lower"
 echo -e "\n${BOLD}Debug mode: ${BLUE}$debug_lower${NC}${BOLD}.${NC}\n"
 
-# Run index.ts with Bun, passing the environment variables
+valid_subtitle=false
+while [ "$valid_subtitle" = false ]; do
+  read -p "$(echo -e "${YELLOW}Do you want to activate subtitles? (yes/no) [Default: yes]:${NC} ")" subtitle_option
+  
+  if [ -z "$subtitle_option" ]; then
+    subtitle_option="yes"
+  fi
+
+  subtitle_lower=$(echo "$subtitle_option" | tr '[:upper:]' '[:lower:]')
+  
+  if [ "$subtitle_lower" = "yes" ] || [ "$subtitle_lower" = "no" ]; then
+    valid_subtitle=true
+  else
+    echo -e "\n${BOLD}Error: Please enter 'yes' or 'no'.${NC}\n"
+  fi
+done
+
+export ACTIVATE_SUBTITLE="$subtitle_lower"
+echo -e "\n${BOLD}Activate subtitles: ${BLUE}$subtitle_lower${NC}${BOLD}.${NC}\n"
+
 bun src/core/index.ts 

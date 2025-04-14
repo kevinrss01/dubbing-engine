@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from 'openai/resources';
+import type { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from 'openai/resources';
 
 export type OpenAIModel = string;
 
@@ -47,7 +47,7 @@ export const requestToGPT = async ({
 
   const retryDelay = 1000;
   let attemptCount = 0;
-  
+
   if (oModelsWithoutInstructions.includes(model) && instructions) {
     prompt = `
       ${instructions}
@@ -57,6 +57,10 @@ export const requestToGPT = async ({
       ${prompt}
     `;
   }
+
+  const timeoutId = setTimeout(() => {
+    throw new Error('OpenAI API request timed out');
+  }, 90000);
 
   try {
     const messagesArray: ChatCompletionMessageParam[] = instructions
@@ -97,6 +101,8 @@ export const requestToGPT = async ({
       throw new Error('Error with OpenAI API');
     }
 
+    clearTimeout(timeoutId);
+
     return finalResponse;
   } catch (error: any) {
     console.error('Error with OpenAI API:', error);
@@ -105,7 +111,7 @@ export const requestToGPT = async ({
       console.error(`Retrying after ${retryDelay} milliseconds...`);
       await new Promise((resolve) => setTimeout(resolve, retryDelay));
       attemptCount++;
-      
+
       return requestToGPT({
         prompt,
         maxTokens,
