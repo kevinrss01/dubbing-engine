@@ -8,7 +8,7 @@
 
 ### Original audio
 
-https://github.com/kevinrss01/dubbing-engine/assets/username/example.mp4
+https://github.com/kevinrss01/dubbing-engine/blob/main/input/example.mp4
 
 ### Translated audio
 

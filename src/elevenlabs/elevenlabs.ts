@@ -271,7 +271,7 @@ export class ElevenLabsService {
     response: Buffer;
     requestId: string;
   }> {
-    const outputFormat: OutputFormat = 'mp3_22050_32';
+    const outputFormat: OutputFormat = 'mp3_44100_128';
 
     const settingsElevenLabs: SettingsElevenLabs = {
       text: text,
