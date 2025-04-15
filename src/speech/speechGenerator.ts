@@ -246,7 +246,7 @@ export class SpeechGenerator {
   ): Promise<Buffer[]> {
     console.debug('Getting audios from one speaker...');
     const uuid = crypto.randomUUID();
-    const finalAudioPath = `temporary-files/finalAudioPathFromSpeaker-${uuid}.wav`;
+    const finalAudioPath = `temporary-files/finalAudioPathFromSpeaker-${uuid}.mp3`;
     const audioPartsPathFromSpeaker: string[] = [];
 
     try {
@@ -289,6 +289,9 @@ export class SpeechGenerator {
       }
     } catch (error) {
       console.error(error);
+      if (error instanceof Error) {
+        throw error;
+      }
       throw new Error('Error while getting audio from one speaker.');
     } finally {
       if (fs.existsSync(finalAudioPath)) {

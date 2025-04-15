@@ -6,7 +6,6 @@ import ffmpeg from 'fluent-ffmpeg';
 import crypto from 'crypto';
 import { Readable } from 'stream';
 import { PassThrough } from 'stream';
-import { file } from 'bun';
 import { file as fileTMP } from 'tmp-promise';
 import path from 'path';
 import { VideoUtils } from './video-utils';
@@ -345,6 +344,7 @@ export class AudioUtils {
     end: number,
     returnBuffer: boolean = true,
   ): Promise<Buffer | string> {
+    console.debug('Cutting audio to buffer at specific time...');
     const { path: tempFilePath, cleanup } = await fileTMP({
       postfix: '.mp3',
       keep: !returnBuffer,
@@ -366,6 +366,7 @@ export class AudioUtils {
             if (returnBuffer) {
               const buffer = await fsPromises.readFile(tempFilePath);
               await cleanup();
+              console.debug('Audio cut to buffer at specific time successfully.');
               resolve(buffer);
             } else {
               resolve(tempFilePath);

@@ -6,6 +6,49 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 BOLD='\033[1m'
 
+# --- Pre-run Checks ---
+if [ ! -f ".env" ]; then
+  echo -e "${BOLD}${YELLOW}Warning: .env file not found in the project root.${NC}"
+  echo -e "${BOLD}Please create a .env file with the required environment variables before running this script.${NC}"
+  exit 1
+fi
+echo -e "${GREEN}.env file check passed.${NC}"
+
+if ! command -v node &> /dev/null; then
+  echo -e "${BOLD}Error: Node.js is not installed. Please install it to continue.${NC}"
+  exit 1
+fi
+echo -e "${GREEN}Node.js check passed.${NC}"
+
+if ! command -v bun &> /dev/null; then
+  echo -e "${BOLD}Error: Bun is not installed. Please install it to continue.${NC}"
+  exit 1
+fi
+echo -e "${GREEN}Bun check passed.${NC}"
+
+if ! command -v ffmpeg &> /dev/null; then
+  echo -e "${BOLD}Error: FFmpeg is not installed. Please install it to continue.${NC}"
+  echo -e "${BOLD}See installation instructions at: https://ffmpeg.org/download.html${NC}"
+  exit 1
+fi
+echo -e "${GREEN}FFmpeg check passed.${NC}"
+
+if [ ! -d "node_modules" ]; then
+  echo -e "${YELLOW}Dependencies not found. Installing...${NC}"
+  bun install
+  if [ $? -ne 0 ]; then
+    echo -e "${BOLD}Error: Failed to install dependencies with pnpm.${NC}"
+    exit 1
+  fi
+  echo -e "${GREEN}Dependencies installed successfully.${NC}"
+else
+    echo -e "${GREEN}Dependencies check passed (node_modules found).${NC}"
+fi
+
+echo -e "\n${GREEN}All checks passed. Proceeding with script...${NC}\n"
+
+# --- Script Start ---
+
 clear
 echo -e "${BOLD}╔════════════════════════════════════════╗${NC}"
 echo -e "${BOLD}║      ${BLUE}Choose the target language  ${NC}      ${BOLD}║${NC}"
@@ -70,10 +113,10 @@ echo ""
 
 valid_selection=false
 while [ "$valid_selection" = false ]; do
-  read -p "$(echo -e "${YELLOW}Enter a language number (1-$count) or type the language name [Default: english]:${NC} ")" selection
+  read -p "$(echo -e "${YELLOW}Enter a language number (1-$count) or type the language name [Default: french]:${NC} ")" selection
   
   if [ -z "$selection" ]; then
-    selection="english"
+    selection="french"
   fi
 
   is_valid=false

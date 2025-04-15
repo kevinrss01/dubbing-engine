@@ -61,7 +61,9 @@ export const translate = async () => {
       videoPathWithoutAudio = videoPath;
       audioPathWithoutVideo = audioPath;
     } else {
-      audioPathWithoutVideo = inputFilePath;
+      const audioPathCopy = `temporary-files/original-audio-${crypto.randomUUID()}.wav`;
+      await fsPromises.copyFile(inputFilePath, audioPathCopy);
+      audioPathWithoutVideo = audioPathCopy;
     }
 
     const transcription = await Transcriber.transcribeAudio({

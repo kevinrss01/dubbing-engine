@@ -48,8 +48,10 @@ interface SettingsElevenLabs {
 
 //Max 3 previous request ids
 export type PreviousRequestIdsEL = string[];
-
 /*
+
+
+
 
 **Stability
 *The stability slider determines how stable the voice is and the randomness between each generation.
@@ -74,6 +76,26 @@ However, using this setting requires a slightly higher computational load, which
 The differences introduced by this setting are generally rather subtle.
 
 */
+
+export type OutputFormat =
+  | 'mp3_22050_32'
+  | 'mp3_44100_32'
+  | 'mp3_44100_64'
+  | 'mp3_44100_96'
+  | 'mp3_44100_128'
+  | 'mp3_44100_192'
+  | 'pcm_8000'
+  | 'pcm_16000'
+  | 'pcm_22050'
+  | 'pcm_24000'
+  | 'pcm_44100'
+  | 'ulaw_8000'
+  | 'alaw_8000'
+  | 'opus_48000_32'
+  | 'opus_48000_64'
+  | 'opus_48000_96'
+  | 'opus_48000_128'
+  | 'opus_48000_192';
 
 export class ElevenLabsService {
   elevenLabsApiKey: string | undefined;
@@ -249,6 +271,8 @@ export class ElevenLabsService {
     response: Buffer;
     requestId: string;
   }> {
+    const outputFormat: OutputFormat = 'mp3_22050_32';
+
     const settingsElevenLabs: SettingsElevenLabs = {
       text: text,
       model_id: modelId,
@@ -258,7 +282,9 @@ export class ElevenLabsService {
         stability: 0.5,
         use_speaker_boost: true,
       },
-      output_format: 'pcm_44100',
+      output_format: outputFormat,
+      //! MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above.
+      //output_format: 'pcm_44100',
     };
 
     if (previousText) settingsElevenLabs.previous_text = previousText + ' ';
@@ -287,10 +313,11 @@ export class ElevenLabsService {
 
         const buffer = await readableToBuffer(res);
 
-        const wavBuffer = await AudioUtils.convertPCMBufferToWav(buffer);
+        const audioBuffer =
+          outputFormat === 'mp3_22050_32' ? buffer : await AudioUtils.convertPCMBufferToWav(buffer);
 
         return {
-          response: wavBuffer,
+          response: audioBuffer,
           requestId: crypto.randomUUID(),
         };
       } catch (error: any) {
