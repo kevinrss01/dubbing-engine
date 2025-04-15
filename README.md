@@ -6,13 +6,13 @@
 
 ## 🌐 Demo
 
-### Original audio
+### Original video
 
-https://github.com/kevinrss01/dubbing-engine/blob/main/input/example.mp4
+https://github.com/user-attachments/assets/73a22695-9457-4c10-8782-c663dae249f3
 
-### Translated audio
+### Translated video
 
-https://github.com/kevinrss01/dubbing-engine/assets/username/example-result.mp4
+https://github.com/user-attachments/assets/a7b07820-a99c-4c95-80f6-e2c76f8d191b
 
 This AI-powered translation and video dubbing engine can translate audio and video files while cloning the original voices, adding subtitles, and synchronizing lip movements. The engine powers [VoiceCheap.ai](https://voicecheap.ai).
 
