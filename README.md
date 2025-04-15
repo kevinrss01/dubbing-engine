@@ -162,6 +162,20 @@ For optimal performance and to use all features:
 
 N/A
 
+## 📊 Translation Quality & Model Options
+
+The quality of translations can be increased depending on your needs and budget by changing the AI models used:
+
+- **Translation Models**: You can use instead reasoning models like o3-mini (with reasoning capabilities), or upcoming models like o4-mini or o4.
+- **Adaptation Quality**: For models supporting reasoning efforts (o1, o3-mini, o1-Pro), you can increase the reasoning_effort parameter from 'medium' to "high".
+
+These options allow you to balance cost versus quality based on your specific requirements.
+
+---
+
+If you find this project helpful, please consider giving it a ⭐ to show support!
+
+
 ---
 
 If you find this project helpful, please consider giving it a ⭐ to show support!
