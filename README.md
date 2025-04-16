@@ -36,21 +36,17 @@ The dubbing process follows these steps:
    - Transcribe audio
    - Generate context summary
    - Perform speaker diarization (identify different speakers)
-   
 3. **Translation**:
    - Format speech segments
    - Translate with LLM contextual awareness
-   
 4. **Audio Processing**:
    - Separate voices and background audio
    - Measure audio levels
    - Create timeline for each speaker
-   
 5. **Voice Generation**:
    - Clone each speaker's voice
    - Apply SmartSync adaptation to match timing
    - Adjust speed if necessary
-   
 6. **Final Assembly**:
    - Concatenate translated segments
    - Adjust audio levels and equalize
@@ -66,14 +62,53 @@ SmartSync adapts the speaker's speech based on language and speaking speed to ma
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/)
-- [Bun](https://bun.sh/) (JavaScript runtime & toolkit)
-- [FFmpeg](https://ffmpeg.org/download.html)
-- API keys for various services
+Before launching the project, make sure you have the following software installed:
 
-### API Keys Required
+- **Node.js**: [Download Node.js](https://nodejs.org/)
+- **Bun**: JavaScript runtime & toolkit
+- **FFmpeg**: Audio/video processing tool
+- **API Keys**: For various services (see below)
 
-Create a `.env` file based on the `.env.example`:
+#### How to Install Required Software
+
+**Node.js**
+
+- **Windows / macOS / Linux**: Download and install from [https://nodejs.org/](https://nodejs.org/)
+
+**Bun**
+
+- **macOS / Linux / Windows (WSL)**:
+  ```bash
+  curl -fsSL https://bun.sh/install | bash
+  ```
+  For more details, see [Bun's official install guide](https://bun.sh/docs/installation).
+
+**FFmpeg**
+
+- **macOS**: Install via Homebrew:
+  ```bash
+  brew install ffmpeg
+  ```
+- **Windows**: Download the latest build from [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html), extract, and add the `bin` folder to your PATH.
+- **Linux**: Install via package manager (e.g. Ubuntu/Debian):
+  ```bash
+  sudo apt update && sudo apt install ffmpeg
+  ```
+  For other distributions, see [FFmpeg's official download page](https://ffmpeg.org/download.html).
+
+#### API Keys Required
+
+You will need API keys from the following services:
+
+- **OpenAI**: [Get your API key here](https://platform.openai.com/account/api-keys)
+- **Gladia**: [Sign up and get your API key here](https://app.gladia.io/)
+- **Eleven Labs**: [Sign up and get your API key here](https://elevenlabs.io/)
+- **Lalal.ai**: [Sign up and get your license key here](https://www.lalal.ai/)
+- **SyncLab**: [Sign up and get your API key here](https://synclab.ai/)
+  - **Note**: SyncLab requires a subscription. To add lipsync to videos longer than 5 minutes, you must have a "Scale" plan.
+- **AWS (for lipsync)**: Create an account at [AWS](https://aws.amazon.com/) and generate S3 credentials if you want to use the lipsync feature.
+
+Create a `.env` file based on the `.env.example` and fill in your API keys:
 
 ```
 PORT=4000
@@ -103,6 +138,7 @@ AWS_BUCKET_NAME=your_aws_bucket_name_here
 ```
 
 The script will:
+
 - Check for required dependencies
 - Verify environment variables
 - Install necessary packages
@@ -122,30 +158,99 @@ The script will:
 
 The engine supports all these languages:
 
-| Flag | Language | Flag | Language |
-|------|----------|------|----------|
-| 🇸🇪 | Swedish | 🇫🇷 | French |
-| 🇰🇷 | Korean | 🇲🇾 | Malay |
-| 🇺🇦 | Ukrainian | 🇮🇹 | Italian |
-| 🇬🇷 | Greek | 🇷🇴 | Romanian |
-| 🇯🇵 | Japanese | 🇨🇳 | Mandarin |
-| 🇺🇸 | English | 🇮🇳 | Tamil |
-| 🇺🇸 | American English | 🇹🇷 | Turkish |
-| 🇷🇺 | Russian | 🇮🇩 | Indonesian |
-| 🇮🇳 | Hindi | 🇵🇭 | Tagalog |
-| 🇩🇪 | German | 🇸🇦 | Arabic |
-| 🇩🇰 | Danish | 🇳🇴 | Norwegian |
-| 🇧🇬 | Bulgarian | 🇻🇳 | Vietnamese |
-| 🇨🇿 | Czech | 🇭🇺 | Hungarian |
-| 🇵🇱 | Polish | 🇬🇧 | British English |
-| 🇸🇰 | Slovak | 🇨🇦 | French Canadian |
-| 🇫🇮 | Finnish | 🇭🇷 | Croatian |
-| 🇪🇸 | Spanish | 🇳🇱 | Dutch |
-| 🇵🇹 | Portuguese |  |  |
+| Accepted Input Language | Output Language                            |
+| ----------------------- | ------------------------------------------ |
+| Afrikaans               |                                            |
+| Albanian                |                                            |
+| Amharic                 |                                            |
+| Arabic                  | Arabic                                     |
+| Armenian                |                                            |
+| Azerbaijani             |                                            |
+| Bashkir                 |                                            |
+| Belarusian              |                                            |
+| Bengali                 |                                            |
+| Bosnian                 |                                            |
+| Breton                  |                                            |
+| Bulgarian               | Bulgarian                                  |
+| Burmese                 |                                            |
+| Catalan                 |                                            |
+| Chinese                 | Mandarin                                   |
+| Croatian                | Croatian                                   |
+| Czech                   | Czech                                      |
+| Danish                  | Danish                                     |
+| Dutch                   | Dutch                                      |
+| English                 | English, American English, British English |
+| Estonian                |                                            |
+| Finnish                 | Finnish                                    |
+| French                  | French, French Canadian                    |
+| Galician                |                                            |
+| Georgian                |                                            |
+| German                  | German                                     |
+| Greek                   | Greek                                      |
+| Gujarati                |                                            |
+| Haitian                 |                                            |
+| Hausa                   |                                            |
+| Hebrew                  |                                            |
+| Hindi                   | Hindi                                      |
+| Hungarian               | Hungarian                                  |
+| Icelandic               |                                            |
+| Indonesian              | Indonesian                                 |
+| Italian                 | Italian                                    |
+| Japanese                | Japanese                                   |
+| Javanese                |                                            |
+| Kannada                 |                                            |
+| Kazakh                  |                                            |
+| Korean                  | Korean                                     |
+| Lao                     |                                            |
+| Latvian                 |                                            |
+| Lingala                 |                                            |
+| Lithuanian              |                                            |
+| Luxembourgish           |                                            |
+| Macedonian              |                                            |
+| Malagasy                |                                            |
+| Malay                   | Malay                                      |
+| Malayalam               |                                            |
+| Marathi                 |                                            |
+| Moldavian               |                                            |
+| Moldovan                |                                            |
+| Mongolian               |                                            |
+| Nepali                  |                                            |
+| Norwegian               | Norwegian                                  |
+| Occitan                 |                                            |
+| Panjabi                 |                                            |
+| Pashto                  |                                            |
+| Persian                 |                                            |
+| Polish                  | Polish                                     |
+| Portuguese              | Portuguese                                 |
+| Pushto                  |                                            |
+| Romanian                | Romanian                                   |
+| Russian                 | Russian                                    |
+| Serbian                 |                                            |
+| Sindhi                  |                                            |
+| Sinhala                 |                                            |
+| Slovak                  | Slovak                                     |
+| Slovenian               |                                            |
+| Somali                  |                                            |
+| Spanish                 | Spanish                                    |
+| Sundanese               |                                            |
+| Swahili                 |                                            |
+| Swedish                 | Swedish                                    |
+| Tagalog                 | Tagalog                                    |
+| Tamil                   | Tamil                                      |
+| Turkish                 | Turkish                                    |
+| Ukrainian               | Ukrainian                                  |
+| Urdu                    |                                            |
+| Uzbek                   |                                            |
+| Valencian               |                                            |
+| Vietnamese              | Vietnamese                                 |
+| Welsh                   |                                            |
+| Yiddish                 |                                            |
+| Yoruba                  |                                            |
 
 ## 🤝 Contributing
 
 Contributions are welcome! Feel free to:
+
 - Star this repository to show support
 - Open issues for bugs or feature requests
 - Submit pull requests to improve the codebase
@@ -153,6 +258,7 @@ Contributions are welcome! Feel free to:
 ## ⚠️ Requirements
 
 For optimal performance and to use all features:
+
 - Ensure FFmpeg is properly installed
 - Configure all API keys
 - For lipsync features, AWS S3 credentials are required
@@ -174,7 +280,6 @@ These options allow you to balance cost versus quality based on your specific re
 ---
 
 If you find this project helpful, please consider giving it a ⭐ to show support!
-
 
 ---
 
