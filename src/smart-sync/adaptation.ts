@@ -373,7 +373,7 @@ export class Adaptation {
         temperature: 0.5,
         instructions: instruction,
         responseFormat: 'text',
-        model: models.o3Mini,
+        model: models.o4Mini,
       });
 
       return response;

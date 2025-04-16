@@ -17,10 +17,25 @@ export const models = {
   o1Pro: 'o1-pro',
   gpt45Preview: 'gpt-4.5-preview',
   gpt4_1: 'gpt-4.1',
+  o4Mini: 'o4-mini',
+  o3: 'o4',
 };
 
-const oModelsWithoutInstructions: OpenAIModel[] = [models.o1Mini, models.o1, models.o3Mini];
-const oModelsWithAdjustableReasoningEffort: OpenAIModel[] = [models.o1, models.o3Mini, models.o1Pro];
+const oModelsWithoutInstructions: OpenAIModel[] = [
+  models.o1Mini,
+  models.o1,
+  models.o3Mini,
+  models.o4Mini,
+  models.o3,
+];
+
+const oModelsWithAdjustableReasoningEffort: OpenAIModel[] = [
+  models.o1,
+  models.o3Mini,
+  models.o1Pro,
+  models.o4Mini,
+  models.o3,
+];
 const defaultInstructions = 'You are a helpful assistant.';
 
 export const requestToGPT = async ({
