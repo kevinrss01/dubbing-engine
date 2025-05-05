@@ -127,6 +127,8 @@ AWS_BUCKET_NAME=your_aws_bucket_name_here
 
 > **Note**: AWS credentials are only required for the lipsync feature. Users need a "Scale" subscription for SyncLab to add lipsync to videos longer than 5 minutes.
 
+> **Important**: It is mandatory to add your own API keys in the `.env` file for all services (excluding the SyncLab API key, which is optional). Without these keys, you will not be able to start the project.
+
 ### Installation & Usage
 
 1. Clone the repository
@@ -272,14 +274,24 @@ N/A
 
 The quality of translations can be increased depending on your needs and budget by changing the AI models used:
 
-- **Translation Models**: You can use instead reasoning models like o3-mini (with reasoning capabilities), or upcoming models like o4-mini or o4.
-- **Adaptation Quality**: For models supporting reasoning efforts (o1, o3-mini, o1-Pro), you can increase the reasoning_effort parameter from 'medium' to "high".
+- **Translation Models**: You can use instead, reasoning models like o3-mini (with reasoning capabilities), or upcoming models like o4-mini or o4.
+- **Adaptation Quality**: For models supporting reasoning efforts (o1, o3-mini, o3, o1-Pro), you can increase the reasoning_effort parameter from 'medium' to "high".
 
 These options allow you to balance cost versus quality based on your specific requirements.
 
----
+## 🏆 Smarter Models
 
-If you find this project helpful, please consider giving it a ⭐ to show support!
+You can leverage models with superior performance on the [MMLU-Pro benchmark](https://huggingface.co/spaces/TIGER-Lab/MMLU-Pro) for enhanced translation quality. Avoid using DeepL as it lacks comprehensive context handling and instruction adherence.
+
+## 🔧 Alternative Open-Source Models
+
+To reduce external API dependencies, consider using open-source alternatives:
+
+- **Transcription**: Whisper
+- **Text-to-Speech**: `hexgrad/Kokoro-82M`, Orpheus Speech from Canopy, SESAME models
+- **Translation & Adaptation**: LLAMA
+- **Multi-language Voice Cloning**: _TBD_
+- **Lip Synchronization**: Wav2Lip
 
 ---
 

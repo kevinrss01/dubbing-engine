@@ -674,10 +674,8 @@ export class AudioUtils {
     const { path: outputPath, cleanup: cleanupOutput } = await fileTMP({ postfix: '.wav' });
 
     try {
-      // Write input buffer to temp file
       await fsPromises.writeFile(inputPath, speech);
 
-      // Process with ffmpeg using file-based approach
       await new Promise<void>((resolve, reject) => {
         ffmpeg(inputPath)
           .audioCodec('pcm_s16le')
@@ -694,14 +692,12 @@ export class AudioUtils {
           .save(outputPath);
       });
 
-      // Read the result back as buffer
       const resultBuffer = await fsPromises.readFile(outputPath);
       return resultBuffer;
     } catch (error) {
       console.error('Failed to adjust audio speed:', error);
       throw error;
     } finally {
-      // Clean up temp files
       await cleanupInput();
       await cleanupOutput();
     }

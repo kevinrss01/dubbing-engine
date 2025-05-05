@@ -267,10 +267,9 @@ export class SpeechGenerator {
             throw new Error('singleVocalSpeakerPath is not type string');
           }
         } catch (error) {
-          // Nettoyer les fichiers déjà créés en cas d'erreur
-          audioPartsPathFromSpeaker.forEach(async (path) => {
+          for (const path of audioPartsPathFromSpeaker) {
             if (fs.existsSync(path)) await fsPromises.unlink(path);
-          });
+          }
           throw error;
         }
       }
@@ -346,7 +345,6 @@ export class SpeechGenerator {
 
       for (let i = 0; i < speechArraySorted.length; i++) {
         const speech = speechArraySorted[i];
-        // Convertir en Buffer si c'est une Response
         const audioBuffer =
           speech.speech instanceof Response ? Buffer.from(await speech.speech.arrayBuffer()) : speech.speech;
 
