@@ -272,6 +272,8 @@ N/A
 
 ## 📊 Translation Quality & Model Options
 
+**The current stack (OpenAI + Gladia + ElevenLabs + Lalal.ai) comes from months of benchmark­ing; it’s still the most accurate & stable combo I’ve found, even if it costs more.**
+
 The quality of translations can be increased depending on your needs and budget by changing the AI models used:
 
 - **Translation Models**: You can use instead, reasoning models like o3-mini (with reasoning capabilities), or upcoming models like o4-mini or o4.
