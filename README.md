@@ -271,7 +271,7 @@ For optimal performance and to use all features:
 
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License.
 Personal and non-commercial use only.
-**Commercial use / SaaS / API integrations require a separate license — contact kevin.rousseau@voicecheap.ai** to access an enhanced API build.
+**Commercial use / SaaS / API integrations require a separate license — contact kevin.rousseau@voicecheap.ai** to access an enhanced API.
 
 View the full license at https://creativecommons.org/licenses/by-nc/4.0/
 
