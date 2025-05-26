@@ -1,0 +1,16 @@
+Dubbing Engine
+Copyright (c) 2024 VoiceCheap.ai
+
+This product includes software developed at VoiceCheap.ai.
+
+This project is licensed under the Creative Commons
+Attribution-NonCommercial 4.0 International License.
+For commercial use, please contact: kevin.rousseau@voicecheap.ai
+
+Third-party dependencies and acknowledgments:
+
+- TypeScript (Apache License 2.0)
+- Bun (MIT License)
+- Various API integrations (see README.md for details)
+
+For more information about licensing, see the LICENSE file.

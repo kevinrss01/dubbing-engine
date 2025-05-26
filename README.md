@@ -3,6 +3,7 @@
 # Dubbing Engine with Bun and Typescript
 
 [![Star this repo](https://img.shields.io/github/stars/kevinrss01/dubbing-engine?style=social)](https://github.com/kevinrss01/dubbing-engine)
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 ## 🌐 Demo
 
@@ -268,7 +269,11 @@ For optimal performance and to use all features:
 
 ## 📄 License
 
-N/A
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License.
+Personal and non-commercial use only.
+**Commercial use / SaaS / API integrations require a separate license — contact kevin.rousseau@voicecheap.ai** to access an enhanced API build.
+
+View the full license at https://creativecommons.org/licenses/by-nc/4.0/
 
 ## 📊 Translation Quality & Model Options
 
